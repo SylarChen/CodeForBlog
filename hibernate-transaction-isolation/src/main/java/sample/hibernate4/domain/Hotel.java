@@ -44,7 +44,6 @@ public class Hotel implements Serializable {
 	private City city;
 
 	@Column(nullable = false)
-	@NaturalId
 	private String name;
 
 	@Column(nullable = false)

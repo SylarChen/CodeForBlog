@@ -6,4 +6,8 @@ public interface SampleService {
 	
 	void request_2();
 	
+	void request_3();
+	
+	void request_4();
+	
 }

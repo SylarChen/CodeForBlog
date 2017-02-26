@@ -25,4 +25,15 @@ public class SampleController {
 		this.sampleService.request_2();
 	}
 
+	@GetMapping("/r3")
+	@ResponseBody
+	public void r3() {
+		this.sampleService.request_3();
+	}
+	
+	@GetMapping("/r4")
+	@ResponseBody
+	public void r4() {
+		this.sampleService.request_4();
+	}
 }

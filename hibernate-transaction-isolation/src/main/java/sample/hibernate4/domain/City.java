@@ -21,14 +21,10 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 
 @Entity
 public class City implements Serializable {
@@ -46,8 +42,6 @@ public class City implements Serializable {
 	private String country;
 	
 	@OneToMany(mappedBy="city")
-//	fetch=FetchType.EAGER
-//	@Fetch(FetchMode.SUBSELECT)
 	private Set<Hotel> hotles;
 
 	public City(String name, String country) {

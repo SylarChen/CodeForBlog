@@ -1,33 +1,18 @@
-/*
- * Copyright 2012-2016 the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package sample.hibernate4.service;
+
+import java.util.List;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import sample.hibernate4.domain.City;
-import org.springframework.transaction.annotation.*;
 
 @Component("cityService")
-@Transactional(isolation=Isolation.REPEATABLE_READ)
+@Transactional(isolation=Isolation.READ_UNCOMMITTED)
 class SampleServiceImpl implements SampleService {
 
 	@Autowired
@@ -36,8 +21,7 @@ class SampleServiceImpl implements SampleService {
 	@Override
 	public void request_1() {
 		
-		Session session = sessionFactory.openSession();
-		Transaction transaction = session.beginTransaction();
+		Session session = sessionFactory.getCurrentSession();
 		
 		City city = (City) session.get(City.class, 1L);
 		System.out.println(city);
@@ -47,27 +31,59 @@ class SampleServiceImpl implements SampleService {
 		city = (City) session.get(City.class, 1L);
 		System.out.println(city);
 		
-		transaction.commit();
-		session.close();
-		
 	}
 
 	@Override
 	public void request_2() {
-		Session session = sessionFactory.openSession();
-		Transaction transaction = session.beginTransaction();
+		Session session = sessionFactory.getCurrentSession();
 		
 		City city = (City) session.get(City.class, 1L);
-		System.out.println(city);
-	
 		city.setName("ShangHai");
 		city.setCountry("China");
 		
 		session.flush();
+		System.out.println(city);
+	}
+	
+	@Override
+	public void request_3() {
 		
-		transaction.commit();
-		session.close();
+		Session session = sessionFactory.getCurrentSession();
+		
+//		; .createCriteria(City.class).list();
+		List<City> cityList = session.createQuery("select city from City city where id > 2").list();
+		
+		System.out.println("=========First Time=========");
+		for(City city : cityList){
+			System.out.println(city.toString());
+		}
+		System.out.println("============================");
+		
+		session.clear();
+		
+//		cityList = session.createCriteria(City.class).list();
+		
+		cityList = session.createQuery("select city from City city where id > 2").list();
+		
+		City c = (City) session.get(City.class, 5L);
+		
+		System.out.println("=========Second Time=========");
+		for(City city : cityList){
+			System.out.println(city.toString());
+		}
+		System.out.println("============================");
 		
 	}
-
+	
+	@Override
+	public void request_4() {
+		
+		Session session = sessionFactory.getCurrentSession();
+		
+		City city = new City("BeiJing", "China");
+		
+		session.save(city);
+		
+	}
+	
 }
